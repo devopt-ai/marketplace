@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "devopt": {
+      "type": "http",
+      "url": "${DEVOPT_SERVER_URL:-https://api.devopt.dev}/mcp",
+      "headers": { "Authorization": "Bearer ${DEVOPT_MCP_TOKEN}" }
+    }
+  }
+}
