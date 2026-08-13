@@ -1,7 +1,7 @@
 {
   "name": "devopt",
   "description": "Use DevOpt from your agent: connect via MCP access token, then manage executors, tasks, pipelines and triggers on your DevOpt account.",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "author": {
     "name": "DevOpt"
   },
