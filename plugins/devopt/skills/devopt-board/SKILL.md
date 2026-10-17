@@ -55,7 +55,7 @@ exit.
 | tool | what it does |
 | --- | --- |
 | `devopt_issue_next` | `{boardId, staleAfterMs?}` → the next claimable issue, or nothing. Nothing is a **clear board** — success, not an error. |
-| `devopt_issue_get` | `{issueId}` → full state: the current column (with its `isDone` flag), its checklist items, threads awaiting an agent, recent comments, `gitBranch`, `agentStatus`. |
+| `devopt_issue_get` | `{issueId}` → full state: the current column (with its server-computed `isDone` flag — see Finality), its checklist items, threads awaiting an agent, recent comments, `gitBranch`, `agentStatus`. |
 | `devopt_issue_status` | `{issueId, status, message?, itemId?}` — `working` / `waiting_for_human` / `error` / `completed`. Omit or null the status to clear the lease. |
 | `devopt_issue_check_item` | `{issueId, checklistItemId}` — checks an item off. The server **refuses** a `humanOnly` item. |
 | `devopt_issue_satisfy_requirement` | `{issueId, requirementId, proof: {commit, summary, verification}}` — marks one of the issue's own requirements done. `proof` is required: the commit sha that satisfied it, one line of what was done, and how you verified it; it is recorded as evidence and shown on the done row. Refused for a `humanOnly` requirement, and for one that carries a Definition of Done (tick its items instead). |
@@ -81,9 +81,10 @@ Each item carries `isRequired`, `humanOnly` and `completed`.
 
 ## Finality
 
-An issue is finished when its column's `isDone` flag is set. That flag is the
-only authority — never infer finality from a column's position or from it
-being the last one in the list. Boards get re-ordered and columns get added.
+An issue is finished when `devopt_issue_get` returns `column.isDone: true`.
+The server computes that flag: the board's columns marked done, or — when none
+is marked — its last column. Read it; never derive finality from the column
+list yourself. Boards get re-ordered and columns get added.
 
 ## Comment threads
 
