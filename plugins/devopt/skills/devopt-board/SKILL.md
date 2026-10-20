@@ -63,7 +63,7 @@ exit.
 | `devopt_issue_start_requirement` | `{issueId, requirementId}` → `{workflowRunId}`. Starts the workflow the requirement binds. Refused when unbound, already running, or `humanOnly`. |
 | `devopt_issue_add_requirement` | `{issueId, label, brief?, workflowId?, humanOnly?}` → `{requirementId}`. Record a problem or follow-up you found while working as a requirement — not as a comment. Appended, `pending`. Bind `workflowId` so it can be started. |
 | `devopt_issue_advance` | `{issueId}` → `{advanced, column}`. Moves the issue to the next column. |
-| `devopt_issue_comment` | `{issueId, body, threadId?, awaiting?}` — a new comment, or a reply in a thread. `awaiting` says whose turn it is next. |
+| `devopt_issue_comment` | `{issueId, body, threadId?, parentCommentId?, clientMessageId?, awaiting?}` → `{commentId, threadId, groupKind, parentCommentId, awaiting}`. Without `threadId` it posts in your run's own group. `parentCommentId` replies to a top-level comment (one level). Reuse the same `clientMessageId` (a UUID) when retrying — the retry returns the first comment. `awaiting` says whose turn it is next and is saved with the comment. |
 | `devopt_issue_log` | `{issueId, action, details?}` — an audit entry on the issue. |
 
 ## Checklist items
@@ -86,12 +86,18 @@ The server computes that flag: the board's columns marked done, or — when none
 is marked — its last column. Read it; never derive finality from the column
 list yourself. Boards get re-ordered and columns get added.
 
-## Comment threads
+## Comment groups and threads
 
-A thread whose `awaiting` is `agent` is work: reply to it. If you can answer,
-reply and leave `awaiting` unset so the thread stops asking. If you need a
-human, reply saying what you need, set `awaiting: 'human'`, and put the issue
-in `waiting_for_human`.
+An issue's discussion is split into groups: **General** (people post there),
+one **run** group per agent run (you post there by default), and named
+**topic** groups. `threadId` names a group.
+
+A group whose `awaiting` is `agent` is work: reply in it (pass its `threadId`,
+or `parentCommentId` to answer a specific comment). If you can answer, reply
+and leave `awaiting` unset so it stops asking. If you need a human, reply
+saying what you need, set `awaiting: 'human'`, and put the issue in
+`waiting_for_human`. Post a result a person must read in General by passing
+General's `threadId`. You cannot edit a comment once posted.
 
 ## Working an item
 
