@@ -32,5 +32,10 @@ DevOpt toolset from tools/list.
 
 - 401: token missing/expired/revoked -> mint a new one (step 1). Tokens are
   bearer credentials — never paste them into files or chat.
+- An issue, board or run you expect answers "not found or not permitted": a
+  token sees exactly what the person who minted it can see. A private project
+  is reachable only while that person is a member of it (or an org owner);
+  removing them takes effect on the next call. Ask an admin to add the token's
+  owner to the project, or mint the token as someone who already is.
 - Connection refused: check DEVOPT_SERVER_URL is reachable and includes no
   trailing /mcp (the plugin appends the path).
